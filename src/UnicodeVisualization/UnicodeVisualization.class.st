@@ -36,3 +36,20 @@ UnicodeVisualization >> openSimple [
 	sq magnifier: 20.
 	^ sq
 ]
+
+{ #category : #'instance creation' }
+UnicodeVisualization >> openSimple2 [
+	<script: 'self new openSimple2 inspect'>
+
+	| sq filename contents |
+	filename := '/Users/alexandrebergel/Dropbox/GitRepos/UnicodeVisualization/data/www.unicode.org/Public/14.0.0/ucd/UnicodeData-14.0.0d1.txt'.
+	contents := filename asFileReference contents lines first: 256.
+	
+	sq := UVSequenceVisualization new.
+	sq colorOfBlock: [ :row | ((row substrings: ';') second) substrings first  ].
+	sq numberOfElements: 16 * 16.
+	sq blockSize: 256.
+	sq elements: contents.
+	sq magnifier: 20.
+	^ sq
+]
