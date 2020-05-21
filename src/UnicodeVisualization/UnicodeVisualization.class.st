@@ -33,5 +33,6 @@ UnicodeVisualization >> openSimple [
 	sq blockSize: 256.
 	sq elements: ((1 to: 16 * 16) collect: [ :i | 
 			[ i unicodeCharacterData ] on: KeyNotFound do: [ :ex | nil ] ]).
+	sq magnifier: 20.
 	^ sq
 ]

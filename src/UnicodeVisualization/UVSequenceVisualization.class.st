@@ -7,7 +7,8 @@ Class {
 		'r',
 		'blockSize',
 		'numberOfElements',
-		'elements'
+		'elements',
+		'magnifier'
 	],
 	#category : #UnicodeVisualization
 }
@@ -46,17 +47,22 @@ UVSequenceVisualization >> colorOfBlock: oneArgBlock [
 
 { #category : #'as yet unclassified' }
 UVSequenceVisualization >> createFormForValues: someValues [
-	| size form x y |
+	| size form x y realExtent |
 	self assert: [ someValues size sqrt isInteger ].
 	size := someValues size sqrt.
-	form := Form extent: size @ size depth: 32.
-	form fill: (1 @ 1 extent: size @ size) rule: Form over fillColor: Color black.
+	realExtent := (size @ size) * magnifier.
+	form := Form extent: realExtent depth: 32.
+	form fill: (1 @ 1 extent: realExtent) rule: Form over fillColor: Color black.
 
 	x := 0.
 	y := 0.
 	
 	someValues doWithIndex: [ :v :i |
-		form colorAt: (x @ y) put: (self colorOf: v).
+		0 to: magnifier - 1 do: [ :mx | 
+			0 to: magnifier - 1 do: [ :my |
+				form colorAt: (x @ y) * magnifier + (mx @ my) put: (self colorOf: v).
+			]
+		].
 		x := x + 1.
 		size = x ifTrue: [ x := 0. y := y + 1 ].
 	].
@@ -86,6 +92,17 @@ UVSequenceVisualization >> initialize [
 	super initialize.
 	colorMapping := Dictionary new.
 	r := Random seed: 42.
+	magnifier := 1
+]
+
+{ #category : #accessing }
+UVSequenceVisualization >> magnifier [
+	^ magnifier
+]
+
+{ #category : #accessing }
+UVSequenceVisualization >> magnifier: anInteger [
+	magnifier := anInteger
 ]
 
 { #category : #accessing }
