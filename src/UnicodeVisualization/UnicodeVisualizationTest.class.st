@@ -9,7 +9,7 @@ Class {
 
 { #category : #running }
 UnicodeVisualizationTest >> setUp [
-	uv := UnicodeVisualization new
+	uv := UVSequenceVisualization new
 ]
 
 { #category : #tests }
