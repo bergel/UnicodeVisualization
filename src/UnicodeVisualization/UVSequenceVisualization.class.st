@@ -8,7 +8,8 @@ Class {
 		'blockSize',
 		'numberOfElements',
 		'elements',
-		'magnifier'
+		'magnifier',
+		'spaceEvery'
 	],
 	#category : #UnicodeVisualization
 }
@@ -92,7 +93,8 @@ UVSequenceVisualization >> initialize [
 	super initialize.
 	colorMapping := Dictionary new.
 	r := Random seed: 42.
-	magnifier := 1
+	magnifier := 1.
+	colorOfBlock := #yourself
 ]
 
 { #category : #accessing }
@@ -115,10 +117,20 @@ UVSequenceVisualization >> numberOfElements: anObject [
 	numberOfElements := anObject
 ]
 
+{ #category : #accessing }
+UVSequenceVisualization >> spaceEvery [
+	^ spaceEvery
+]
+
+{ #category : #accessing }
+UVSequenceVisualization >> spaceEvery: aNumber [
+	spaceEvery := aNumber
+]
+
 { #category : #'instance creation' }
 UVSequenceVisualization >> visualize [
 	
-	| values f canvas |
+	| values f canvas g |
 
 	canvas := RSCanvas new.
 	
@@ -129,7 +141,18 @@ UVSequenceVisualization >> visualize [
 	].
 
 	RSGridLayout new gapSize: 2; lineItemsCount: blockSize sqrt; on: canvas shapes.
-	
+"	spaceEvery ifNotNil: [ 
+		g := RSGroup new.
+		1 to: canvas shapes size by: spaceEvery / blockSize do: [ :ind |
+			| tt |
+			tt := canvas shapes copyFrom: ind to:  ((ind + (spaceEvery / blockSize)) min: canvas shapes size).
+			RSGridLayout on: tt.
+			g add: tt.
+		].
+	self halt.
+		RSGridLayout on: g.
+		 
+	]."
 	canvas @ RSCanvasController.
 	^ canvas
 ]
