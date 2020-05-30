@@ -51,6 +51,11 @@ UnicodeChar >> initialize [
 	inVersions := OrderedCollection new
 ]
 
+{ #category : #testing }
+UnicodeChar >> isInVersion: aVersion [
+	^ inVersions includes: aVersion
+]
+
 { #category : #accessing }
 UnicodeChar >> name [
 	^ name
@@ -59,4 +64,9 @@ UnicodeChar >> name [
 { #category : #accessing }
 UnicodeChar >> name: anObject [
 	name := anObject
+]
+
+{ #category : #'as yet unclassified' }
+UnicodeChar >> numberOfVersions [
+	^ inVersions size
 ]

@@ -11,5 +11,5 @@ UnicodeEvolutionTest >> testVersion14 [
 	self assert: e numberOfChars equals: 0.
 	
 	e process: e version14.
-	self assert: e numberOfChars > 0.
+	self assert: e numberOfChars equals: 33828.
 ]

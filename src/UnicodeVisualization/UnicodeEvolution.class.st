@@ -2,15 +2,44 @@ Class {
 	#name : #UnicodeEvolution,
 	#superclass : #Object,
 	#instVars : [
-		'chars'
+		'chars',
+		'allVersions',
+		'charsNotNil'
 	],
 	#category : #'UnicodeVisualization-Evolution'
 }
 
+{ #category : #private }
+UnicodeEvolution >> allVersions [
+
+	^ allVersions sortedAs: [ :s | (s substrings: '.') first asInteger ]
+]
+
+{ #category : #accessing }
+UnicodeEvolution >> chars [
+	^ chars select: #notNil
+]
+
+{ #category : #accessing }
+UnicodeEvolution >> charsNotNil [
+	charsNotNil ifNotNil: [ ^ charsNotNil ].
+	charsNotNil := chars select: #notNil.
+	^ charsNotNil
+]
+
+{ #category : #private }
+UnicodeEvolution >> gtInspectorViewIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal2
+		title: 'Evolution ';
+		initializeView: [ self visualizeEvolution ]
+]
+
 { #category : #initialization }
 UnicodeEvolution >> initialize [
 	super initialize.
-	chars := Array new: 16r10FFFF
+	chars := Array new: 16r10FFFF.
+	allVersions := OrderedCollection new
 ]
 
 { #category : #'as yet unclassified' }
@@ -20,8 +49,16 @@ UnicodeEvolution >> numberOfChars [
 
 { #category : #private }
 UnicodeEvolution >> process: aFileName [
+	self process: aFileName as: aFileName asFileReference basename
+]
+
+{ #category : #private }
+UnicodeEvolution >> process: aFileName as: versionName [
 	| ss index c |
-	aFileName asFileReference contents lines do: [ :l |
+	"We register the version name"
+	allVersions add: versionName.
+	
+	(aFileName asFileReference contents lines reject: #isEmpty) do: [ :l |
 		ss := l substrings: ';'.
 		index := Integer readFrom: ss first base: 16.
 		(chars at: index + 1)
@@ -35,20 +72,59 @@ UnicodeEvolution >> process: aFileName [
 				c := chars at: index + 1.
 				self assert: [ c code = ss first ].
 				self assert: [ c index = index ].
-				self assert: [ c name = ss second ].
+				"self assert: [ c name = ss second ]."
 				 ].
-		c addVersion: aFileName asFileReference basename
+		c addVersion: versionName
 			
 	]
 ]
 
 { #category : #private }
 UnicodeEvolution >> run [
-	<script: 'self new run'>
-	self process: self version14
+	<script: 'self new run inspect'>
+	
+	| folder |
+	folder := '/Users/alexandrebergel/Desktop/UnicodeData'.
+	folder asFileReference children do: [ :version |
+		self process: version absolutePath.
+	]
+	
+]
+
+{ #category : #versions }
+UnicodeEvolution >> version12 [
+	^ '/Users/alexandrebergel/Dropbox/GitRepos/UnicodeVisualization/data/www.unicode.org/Public/12.1.0/ucd/UnicodeData.txt'
+]
+
+{ #category : #versions }
+UnicodeEvolution >> version13 [
+	^ '/Users/alexandrebergel/Dropbox/GitRepos/UnicodeVisualization/data/www.unicode.org/Public/13.0.0/ucd/UnicodeData.txt'
 ]
 
 { #category : #versions }
 UnicodeEvolution >> version14 [
 	^ '/Users/alexandrebergel/Dropbox/GitRepos/UnicodeVisualization/data/www.unicode.org/Public/14.0.0/ucd/UnicodeData-14.0.0d1.txt'
+]
+
+{ #category : #private }
+UnicodeEvolution >> visualizeEvolution [
+
+	| c data d |
+	
+	data := OrderedCollection new.
+	self allVersions do: [ :v | 
+		data add: (self charsNotNil select: [ :ch | ch isInVersion: v ]) size
+	].
+	
+	c := RSChart new.
+	d := RSLinePlot new.
+	d x: (1 to: self allVersions size) y: data.
+	c addPlot: d.
+	c mustInclude0inY.
+	c addDecoration: (RSHorizontalTick new doNotUseNiceLabel; numberOfTicks: self allVersions size; withNoLabels).
+	c addDecoration: (RSVerticalTick new).
+	c xlabel: 'Unicode version'.
+	c addDecoration: (RSYLabelDecoration new title: 'Number of Characters'; rotationAngle: -90; offset: -30 @ 0).
+	c title: 'Evolution of the Unicode standard'.
+	^ c 
 ]
