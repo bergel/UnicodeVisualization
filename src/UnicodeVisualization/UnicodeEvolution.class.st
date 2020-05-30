@@ -38,16 +38,25 @@ UnicodeEvolution >> computeDifferences [
 		d version1: version1 version2: version2.
 		d removedChars: (self chars select: [ :c | (c isInVersion: version1) and: [ (c isInVersion: version2) not ] ]) .
 		d addedChars: (self chars select: [ :c | (c isInVersion: version1) not and: [ (c isInVersion: version2) ] ]) .
-		evolutionDifferences add: d
+		evolutionDifferences add: d.
+		version1 := version2.
 	].	
 	^ evolutionDifferences
 ]
 
 { #category : #private }
-UnicodeEvolution >> gtInspectorViewIn: composite [
+UnicodeEvolution >> gtInspectorDifferenceEvolutionIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
-		title: 'Evolution ';
+		title: 'DiffEvo';
+		initializeCanvas: [ self visualizeDifferenceOfEvolution ]
+]
+
+{ #category : #private }
+UnicodeEvolution >> gtInspectorEvolutionIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal3
+		title: 'Evolution';
 		initializeCanvas: [ self visualizeEvolution ]
 ]
 
@@ -120,6 +129,32 @@ UnicodeEvolution >> version13 [
 { #category : #versions }
 UnicodeEvolution >> version14 [
 	^ '/Users/alexandrebergel/Dropbox/GitRepos/UnicodeVisualization/data/www.unicode.org/Public/14.0.0/ucd/UnicodeData-14.0.0d1.txt'
+]
+
+{ #category : #private }
+UnicodeEvolution >> visualizeDifferenceOfEvolution [
+
+	| data c d |
+	data := self computeDifferences.
+	c := RSChart new.
+
+	d := RSBarPlot new.
+	d color: Color green darker darker darker.
+	d y: (data collect: #numberOfAddedChars).
+	c addPlot: d.
+
+	d := RSBarPlot new.
+	d color: Color red darker darker darker.
+	d y: (data collect: #numberOfRemovedChars) negated.
+	c addPlot: d.
+
+	c addDecoration: (RSVerticalTick new integer).
+	c addDecoration: (RSHorizontalTick new).
+	c addDecoration: (RSYLabelDecoration new title: 'Difference of characters'; rotationAngle: -90; offset: -25 @ 0).
+	c addDecoration: (RSXLabelDecoration new title: 'Evolution difference').
+	c build.
+	^ c canvas
+
 ]
 
 { #category : #private }

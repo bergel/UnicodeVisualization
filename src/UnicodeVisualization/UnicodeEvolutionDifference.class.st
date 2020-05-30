@@ -20,6 +20,16 @@ UnicodeEvolutionDifference >> addedChars: anObject [
 	addedChars := anObject
 ]
 
+{ #category : #accessing }
+UnicodeEvolutionDifference >> numberOfAddedChars [
+	^ addedChars size
+]
+
+{ #category : #accessing }
+UnicodeEvolutionDifference >> numberOfRemovedChars [
+	^ removedChars size
+]
+
 { #category : #printing }
 UnicodeEvolutionDifference >> printOn: str [
 	super printOn: str.
