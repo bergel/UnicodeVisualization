@@ -11,7 +11,7 @@ Class {
 		'magnifier',
 		'spaceEvery'
 	],
-	#category : #UnicodeVisualization
+	#category : #'UnicodeVisualization-Visualization'
 }
 
 { #category : #accessing }

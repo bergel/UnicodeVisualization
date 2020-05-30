@@ -1,7 +1,7 @@
 Class {
 	#name : #UnicodeVisualization,
 	#superclass : #Object,
-	#category : #UnicodeVisualization
+	#category : #'UnicodeVisualization-Visualization'
 }
 
 { #category : #'instance creation' }

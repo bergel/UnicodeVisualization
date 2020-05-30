@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'uv'
 	],
-	#category : #UnicodeVisualization
+	#category : #'UnicodeVisualization-Visualization'
 }
 
 { #category : #running }
