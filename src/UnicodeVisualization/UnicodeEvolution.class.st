@@ -27,12 +27,28 @@ UnicodeEvolution >> charsNotNil [
 	^ charsNotNil
 ]
 
+{ #category : #'as yet unclassified' }
+UnicodeEvolution >> computeDifferences [
+	| evolutionDifferences version1 d |
+	evolutionDifferences := OrderedCollection new.
+	
+	version1 := self allVersions first.
+	self allVersions allButFirst do: [ :version2 |
+		d := UnicodeEvolutionDifference new.
+		d version1: version1 version2: version2.
+		d removedChars: (self chars select: [ :c | (c isInVersion: version1) and: [ (c isInVersion: version2) not ] ]) .
+		d addedChars: (self chars select: [ :c | (c isInVersion: version1) not and: [ (c isInVersion: version2) ] ]) .
+		evolutionDifferences add: d
+	].	
+	^ evolutionDifferences
+]
+
 { #category : #private }
 UnicodeEvolution >> gtInspectorViewIn: composite [
 	<gtInspectorPresentationOrder: -10>
-	composite roassal2
+	composite roassal3
 		title: 'Evolution ';
-		initializeView: [ self visualizeEvolution ]
+		initializeCanvas: [ self visualizeEvolution ]
 ]
 
 { #category : #initialization }
@@ -126,5 +142,6 @@ UnicodeEvolution >> visualizeEvolution [
 	c xlabel: 'Unicode version'.
 	c addDecoration: (RSYLabelDecoration new title: 'Number of Characters'; rotationAngle: -90; offset: -30 @ 0).
 	c title: 'Evolution of the Unicode standard'.
-	^ c 
+	c build.
+	^ c canvas
 ]
