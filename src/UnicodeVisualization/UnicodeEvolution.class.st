@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'chars',
 		'allVersions',
-		'charsNotNil'
+		'charsNotNil',
+		'differencesCache'
 	],
 	#category : #'UnicodeVisualization-Evolution'
 }
@@ -44,6 +45,12 @@ UnicodeEvolution >> computeDifferences [
 	^ evolutionDifferences
 ]
 
+{ #category : #'as yet unclassified' }
+UnicodeEvolution >> differences [
+	differencesCache ifNil: [ differencesCache := self computeDifferences ].
+	^ differencesCache
+]
+
 { #category : #private }
 UnicodeEvolution >> gtInspectorDifferenceEvolutionIn: composite [
 	<gtInspectorPresentationOrder: -10>
@@ -58,6 +65,14 @@ UnicodeEvolution >> gtInspectorEvolutionIn: composite [
 	composite roassal3
 		title: 'Evolution';
 		initializeCanvas: [ self visualizeEvolution ]
+]
+
+{ #category : #private }
+UnicodeEvolution >> gtInspectorListDifferenceEvolutionIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite list
+		title: 'LDiffEvo';
+		display: [ self differences ]
 ]
 
 { #category : #initialization }
@@ -135,7 +150,7 @@ UnicodeEvolution >> version14 [
 UnicodeEvolution >> visualizeDifferenceOfEvolution [
 
 	| data c d |
-	data := self computeDifferences.
+	data := self differences.
 	c := RSChart new.
 
 	d := RSBarPlot new.
